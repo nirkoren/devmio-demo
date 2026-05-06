@@ -19,3 +19,13 @@ npm test
 
 ## Lint
 npm run lint
+
+## Jenkins configurations:
+<ul>
+    <li>Go to plugin manager: http://localhost:9090/manage/pluginManager/</li>
+    <li>install NodeJS </li>
+    <li>Go to settings > Tools: http://localhost:9090/manage/configureTools/</li>
+    <li>Add NodeJS 24 (latest) and call it node-24</li>
+</ul>
+
+
