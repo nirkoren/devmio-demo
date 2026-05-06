@@ -1,6 +1,8 @@
 node() {
     def nodeTool = tool 'node-24'
     env.PATH = "${nodeTool}/bin:${env.PATH}"
+    def cmd
+
 
     stage('Init') {
         checkout scm
@@ -22,16 +24,14 @@ node() {
     }
 
     stage('Deploy') {
-        cmd = '''
-            npm install -g pm2
-            pm2 start server.js --name server || pm2 reload server
+         cmd = '''
+            which pm2
+            pm2 list
+            pm2 delete server || true
+            pm2 start server.js --name server
+            pm2 save
         '''
-
-        if (isUnix()) {
-            sh cmd
-        } else {
-            bat cmd
-        }
+        isUnix() ? sh(cmd) : bat(cmd)
     }
 }
 
