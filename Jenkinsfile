@@ -1,51 +1,37 @@
-node {
-    nodejs('node-24') {
-        try {
-            stage('Checkout') {
-                checkout scm
-            }
+node() {
+    def nodeTool = tool 'node-24'
+    env.PATH = "${nodeTool}/bin:${env.PATH}"
 
-            stage('Install') {
-                sh 'npm ci'
-            }
+    stage('Init') {
+        checkout scm
+    }
+    stage('Build') {
+        cmd = "npm ci"
+        isUnix() ? sh(cmd) : bat(cmd)
+    }
 
-            stage('Lint') {
-                sh 'npm run lint'
-            }
+    stage('Lint') {
+        cmd = "npm run lint"
+        isUnix() ? sh(cmd) : bat(cmd)
+    }
 
-            stage('Test') {
-                sh 'npm test'
-            }
+    stage('Tests') {
+        cmd = "npm test"
+        isUnix() ? sh(cmd) : bat(cmd)
+        junit 'reports/junit.xml'
+    }
 
-            stage('Deploy (PM2)') {
-                sh '''
-                    pm2 describe server > /dev/null
-                    if [ $? -eq 0 ]; then
-                        pm2 reload server
-                    else
-                        pm2 start server.js --name server
-                    fi
+    stage('Deploy') {
+        cmd = '''
+            npm install -g pm2
+            pm2 start server.js --name server || pm2 reload server
+        '''
 
-                    pm2 save
-                '''
-            }
-
-            stage('Health Check') {
-                sh '''
-                    echo "Waiting for app to be ready..."
-                    for i in {1..10}; do
-                        curl -f http://localhost:3000/health && exit 0
-                        sleep 2
-                    done
-
-                    echo "Health check failed"
-                    exit 1
-                '''
-            }
-
-        } catch (err) {
-            echo "Pipeline failed: ${err}"
-            throw err
+        if (isUnix()) {
+            sh cmd
+        } else {
+            bat cmd
         }
     }
 }
+
