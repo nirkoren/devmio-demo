@@ -1,6 +1,11 @@
 node() {
     def nodeTool = tool 'node-24'
-    env.PATH = "${nodeTool}/bin:${env.PATH}"
+    if (isUnix()) {
+        env.PATH = "${nodeTool}/bin:${env.PATH}"
+    } else {
+        env.PATH = "${nodeTool};${nodeTool}\\bin;${env.PATH}"
+    }
+
     def cmd
 
 
