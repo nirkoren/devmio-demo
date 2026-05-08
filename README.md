@@ -24,6 +24,7 @@ npm run lint
 
 ## Jenkins configurations:
 <ul>
+    <li>Jenkins can run only with JAVA 21 or JAVA 25 - make sure you have it</li>
     <li>Go to plugin manager: http://localhost:9090/manage/pluginManager/</li>
     <li>install NodeJS and StageView plugins</li>
     <li>Go to settings > Tools: http://localhost:9090/manage/configureTools/</li>
